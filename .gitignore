@@ -1,0 +1,18 @@
+### VisualStudioCode ###
+.vscode/
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# OS generated files #
+######################
+.DS_Store
+*.DS_Store
+build/
+cmake-build-*/
+.idea/

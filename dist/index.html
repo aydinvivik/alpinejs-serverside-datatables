@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alpinejs Server-Side Datatable</title>
+  <link rel="stylesheet" href="/base.0c955ee8.css">
+<script src="/base.0c955ee8.js"></script></head>
+<body>
+  <div class="app-table" x-data="DATATABLE()" x-init="watchers()">
+    <div class="app-table--wrapper">
+      <div class="app-table--header">
+        <div class="cell left">
+          <div class="table-page-count">
+            <span>Show:</span>
+            <select x-model="pageSize" @change="changeView(event.target.value)">
+              <template x-for="(size, index) in paginationSizes" :key="index">
+                <option :value="size" x-text="size"></option>
+              </template>
+            </select>
+          </div><!-- table-page-count -->
+          <div class="table-showing">
+            <template x-for="(heading, index) in headings" :key="index">
+              <label :for="heading.key">
+                <input type="checkbox" checked="" @click="toggleColumn(heading.key)" :id="heading.key">
+                <span x-text="heading.value"></span>
+              </label>
+            </template>
+          </div><!-- table-showing -->
+        </div><!-- cell -->
+        <div class="cell right">
+          <input type="text" placeholder="Search for filter..." x-model="searchFilter" @keyup="search(event)">
+        </div><!-- cell -->
+      </div><!-- app-table--header -->
+      <div class="app-table--body">
+        <div class="app-loading" x-show="loading">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><g stroke-width="4" stroke-linecap="round"><line y1="17" y2="29" transform="translate(32,32) rotate(180)"><animate attributeName="stroke-opacity" dur="750ms" values="1;.85;.7;.65;.55;.45;.35;.25;.15;.1;0;1" repeatCount="indefinite"></animate></line><line y1="17" y2="29" transform="translate(32,32) rotate(210)"><animate attributeName="stroke-opacity" dur="750ms" values="0;1;.85;.7;.65;.55;.45;.35;.25;.15;.1;0" repeatCount="indefinite"></animate></line><line y1="17" y2="29" transform="translate(32,32) rotate(240)"><animate attributeName="stroke-opacity" dur="750ms" values=".1;0;1;.85;.7;.65;.55;.45;.35;.25;.15;.1" repeatCount="indefinite"></animate></line><line y1="17" y2="29" transform="translate(32,32) rotate(270)"><animate attributeName="stroke-opacity" dur="750ms" values=".15;.1;0;1;.85;.7;.65;.55;.45;.35;.25;.15" repeatCount="indefinite"></animate></line><line y1="17" y2="29" transform="translate(32,32) rotate(300)"><animate attributeName="stroke-opacity" dur="750ms" values=".25;.15;.1;0;1;.85;.7;.65;.55;.45;.35;.25" repeatCount="indefinite"></animate></line><line y1="17" y2="29" transform="translate(32,32) rotate(330)"><animate attributeName="stroke-opacity" dur="750ms" values=".35;.25;.15;.1;0;1;.85;.7;.65;.55;.45;.35" repeatCount="indefinite"></animate></line><line y1="17" y2="29" transform="translate(32,32) rotate(0)"><animate attributeName="stroke-opacity" dur="750ms" values=".45;.35;.25;.15;.1;0;1;.85;.7;.65;.55;.45" repeatCount="indefinite"></animate></line><line y1="17" y2="29" transform="translate(32,32) rotate(30)"><animate attributeName="stroke-opacity" dur="750ms" values=".55;.45;.35;.25;.15;.1;0;1;.85;.7;.65;.55" repeatCount="indefinite"></animate></line><line y1="17" y2="29" transform="translate(32,32) rotate(60)"><animate attributeName="stroke-opacity" dur="750ms" values=".65;.55;.45;.35;.25;.15;.1;0;1;.85;.7;.65" repeatCount="indefinite"></animate></line><line y1="17" y2="29" transform="translate(32,32) rotate(90)"><animate attributeName="stroke-opacity" dur="750ms" values=".7;.65;.55;.45;.35;.25;.15;.1;0;1;.85;.7" repeatCount="indefinite"></animate></line><line y1="17" y2="29" transform="translate(32,32) rotate(120)"><animate attributeName="stroke-opacity" dur="750ms" values=".85;.7;.65;.55;.45;.35;.25;.15;.1;0;1;.85" repeatCount="indefinite"></animate></line><line y1="17" y2="29" transform="translate(32,32) rotate(150)"><animate attributeName="stroke-opacity" dur="750ms" values="1;.85;.7;.65;.55;.45;.35;.25;.15;.1;0;1" repeatCount="indefinite"></animate></line></g></svg>
+        </div><!-- app-loading -->
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox" @click="selectAllCheckbox($event);"></th>
+              <template x-for="(heading, index) in headings" :key="index">
+                <th :class="getHeaderClass(event, heading)" :x-ref="heading.key" @click="handleHeaderClick($event, heading, index)">
+                  <span x-text="heading.value"></span>
+                  <template x-if="heading.sort">
+                    <span class="caret-wrapper">
+                      <i class="sort-caret ascending"></i>
+                      <i class="sort-caret descending"></i>
+                    </span>
+                  </template>
+                </th>
+              </template>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="(item, index) in tableData" :key="index">
+              <tr>
+                <td><label :for="item.id"><input type="checkbox" :name="item.id" class="rowCheckbox" @click="getRowDetail($event, item)"></label></td>
+                <td class="first_name"><span x-text="item.first_name"></span></td>
+                <td class="last_name"><span x-text="item.last_name"></span></td>
+                <td class="email"><span x-text="item.email"></span></td>
+                <td class="gender"><span x-text="item.gender"></span></td>
+                <td class="ip_address"><span x-text="item.ip_address"></span></td>
+                <td class="actions"><a href="#" @click.prevent="handleAction(item)">action</a></td>
+              </tr>
+            </template>
+            <tr x-show="totalCount === 0">
+              <td colspan="7">No matching records found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div><!-- app-table--body -->
+      <div class="app-table--footer">
+        <div class="cell left">
+          <div class="table-info">
+            Showing <span x-text="page"></span>st page of <span x-text="totalCount"></span> entries (Shown on page <span x-text="pageSize"></span> entries).
+          </div><!-- table-info -->
+        </div><!-- cell -->
+        <div class="cell right">
+          <nav aria-label="Pagination">
+            <ul class="pagination" @click="onPagerClick">
+              <template x-if="pagination.pageCount > 0">
+                <li :class="{ active: currentPage === 1 }" class="number">1</li>
+              </template>
+              <template x-if="pagination.showPrevMore">
+                <li class="more">...</li>
+              </template>
+              <template x-for="pager in pagers()">
+                <li :class="{ active: currentPage === pager }" class="number" x-text="pager"></li>
+              </template>
+              <template x-if="pagination.showNextMore">
+                <li class="more">...</li>
+              </template>
+              <template x-if="pagination.pageCount > 1">
+                <li :class="{ active: currentPage === pagination.pageCount }" class="number" x-text="pagination.pageCount"></li>
+              </template>
+            </ul>
+          </nav>
+        </div><!-- cell -->
+      </div><!-- app-table--footer -->
+    </div><!-- app-table--wrapper -->
+  </div><!-- app-table -->
+  <script src="/bundle.81605655.js"></script>
+</body>
+</html>

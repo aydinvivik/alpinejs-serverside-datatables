@@ -1,0 +1,27 @@
+{
+  "name": "alpinejs-server-side-datatable",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "parcel src/index.html",
+    "build": "parcel build src/index.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "json-server": "^0.16.3",
+    "parcel-bundler": "^1.12.5",
+    "sass": "^1.32.12"
+  },
+  "dependencies": {
+    "alpinejs": "^2.8.2",
+    "axios": "^0.21.1"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}
